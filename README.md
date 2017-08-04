@@ -1,3 +1,65 @@
+
+
+
+## 编译PRSM需要使用LAPACK，而且是动态库
+
+### 下载链接
+* http://www.netlib.org/blas/blas-3.7.1.tgz
+* http://www.netlib.org/blas/blast-forum/cblas.tgz
+* http://www.netlib.org/lapack/lapack-3.7.1.tgz
+
+### 编译BLAS
+* 修改make.in文件`OPTS     = -O3 -fPIC`
+* 执行以下命令：
+```
+make -j 
+gcc -shared -fPIC -o libblas.so *.o
+sudo cp libblas.* /usr/local/lib/
+```
+
+### 编译CBLAS
+* 生成Makefile.in。`cp Makefile.LINUX Makefile.in`
+* 修改Makefile.in文件
+```
+CFLAGS = -O3 -DADD_ -fPIC
+FFLAGS = -O3 -fPIC
+```
+* 执行以下命令：
+```
+cp ../BLAS/libblas.a  testing
+make -j
+gcc -shared -fPIC -o libcblas.so src/*.o
+mv libcblas.so lib
+mv lib/libcblas* /usr/local/lib/
+```
+
+### 编译LAPACK
+* 生成Makefile.in。`cp INSTALL/make.inc.gfortran makefile.inc`
+* 修改makefile.inc文件
+```
+FORTRAN = gfortran
+OPTS    = -O2 -frecursive -fPIC
+DRVOPTS = $(OPTS)
+NOOPT   = -O0 -frecursive -fPIC
+```
+* 执行以下命令：
+```
+
+make lapacklib -j
+cd SRC
+gcc -shared -fPIC -o liblapack.so *.o
+mv liblapack.so ..
+mv lib/liblapack* /usr/local/lib/
+```
+
+
+### 参考链接
+* http://blog.csdn.net/mlnotes/article/details/9676269
+* http://blog.csdn.net/eastonwoo/article/details/8241693
+* http://www.jianshu.com/p/fe6c4f42aa0b
+* http://blog.sciencenet.cn/blog-685489-726414.html
+
+
 ###################################################################
 #                                                                 #
 #                 Piecewise Rigid Scene Flow                      #
